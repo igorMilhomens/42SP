@@ -1,0 +1,6 @@
+def is_positive(valor: int) -> int:
+    """
+    A função recebe um valor inteiro
+    return: Retorna um booleand (False/True) indicando se o valor é inteiro
+    """
+    return valor > 0
