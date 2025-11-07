@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Encode / Decode</title>
+<style>
+	body { width: 100%; font-family: sans-serif; background: #f4f4f4; font-size: 30pt; margin: 40px; }
+	h4 { text-align: center; margin: auto; color: #777; }
+	form { width:60%;  background: #fff; padding: 20px; border-radius: 8px; min-width: 400px; margin: auto; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+	input, button { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 4px; font-size: 20pt;}
+	input { height: 300px}
+	button { cursor: pointer; background: #007bff; color: white; border: none; }
+	button:hover { background: #0056b3; }
+	#result { margin-top: 10px; font-weight: bold; text-align: center; }
+	#error { margin-top: 10px; font-weight: bold; font-size: 16pt; text-align: center; color: red; }
+</style>
+</head>
+<body>
+	<h4>Base64 Encoder / Decoder</h4>
+	<form id="dataForm">
+		<textarea id="textInput" name="text" placeholder="Enter text" required style="height: 100px; font-size: 20pt; width: 100%;"></textarea>
+		<button type="button" onclick="sendData('/encode')">Encode</button>
+		<button type="button" onclick="sendData('/decode')">Decode</button>
+		<div id="result"></div>
+		<div id="error"></div>
+	</form>
+
+	<script>
+		async function sendData(endpoint) {
+			const input = document.getElementById('textInput').value.trim();
+			const result = document.getElementById('result');
+			const error = document.getElementById('error');
+			result.textContent = '';
+
+			if (!input) {
+				result.textContent = '';
+				error.textContent = 'Please enter text.';
+				return;
+			}
+
+			try {
+				const response = await fetch(endpoint, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ text: input })
+				});
+				if (!response.ok) {
+					const data = await response.json();
+					result.textContent = '';
+					error.textContent = `Error ${response.status}: ${data.detail}`;
+				} else {
+					const data = await response.json();
+					result.textContent = data['text'] || 'No result';
+					error.textContent = '';
+				}
+			} catch (err) {
+				result.textContent = '';
+				error.textContent = `Error: ${err.message}`;
+			}
+		}
+	</script>
+</body>
+</html>
